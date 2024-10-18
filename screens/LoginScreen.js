@@ -1,25 +1,43 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
 export default function LoginScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login to Spatipay</Text>
-      <TouchableOpacity style={styles.googleButton}>
-        <Text style={styles.googleText}>Log in with Google</Text>
-      </TouchableOpacity>
-      <Text style={styles.orText}>Or log in with Email</Text>
-      <TextInput placeholder="Username or Email" style={styles.input} />
-      <TextInput placeholder="Password" style={styles.input} secureTextEntry />
-      <TouchableOpacity>
-        <Text style={styles.forgotText}>Forgot?</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-        <Text style={styles.signupText}>Don't have an account? Sign up</Text>
-      </TouchableOpacity>
+      <View style={styles.topContainer}>
+        <Text style={styles.title}>Login to Spatipay</Text>
+        <TouchableOpacity style={styles.googleButton}>
+          <Image source={require('../assets/google-logo.webp')} style={{ width: 20, height: 20, marginRight: 10 }} />
+          <Text style={styles.googleText}>Log in with Google</Text>
+        </TouchableOpacity>
+        <View style={styles.separatorContainer}>
+          <View style={styles.separator} />
+          <Text style={styles.orText}>  Or log in with Email  </Text>
+          <View style={styles.separator} />
+        </View>
+      </View>
+
+      {/* Input fields centered vertically */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Username or Email</Text>
+        <TextInput placeholder="Username or Email" style={styles.input} />
+
+        {/* Password label with Forgot? on the same line */}
+        <View style={styles.passwordContainer}>
+          <Text style={styles.passwordLabel}>Password</Text>
+          <TouchableOpacity style={styles.forgotButton}>
+            <Text style={styles.forgotText}>Forgot?</Text>
+          </TouchableOpacity>
+        </View>
+        <TextInput placeholder="Password" style={styles.input} secureTextEntry />
+
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+          <Text style={styles.signupText}>Don't have an account? Sign up</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -28,47 +46,103 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#2EB872',
+  },
+  topContainer: {
     alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop: 100, // Keep some padding from the top
+    marginBottom: '-40%', // Adjusted margin to reduce space below
   },
   title: {
-    fontSize: 24,
+    fontSize: 38,
     fontWeight: 'bold',
-    marginBottom: 30,
+    marginBottom: 10, // Reduced margin below the title
     color: '#fff',
   },
   googleButton: {
+    width: '60%',
+    flexDirection: 'row',
     backgroundColor: '#000',
     paddingVertical: 10,
-    paddingHorizontal: 30,
-    borderRadius: 5,
-    marginBottom: 15,
+    paddingHorizontal: 50,
+    borderWidth: 1,
+    borderColor: '#fff',
+    borderRadius: 25,
+    alignItems: 'center',
   },
   googleText: {
     color: '#fff',
     fontSize: 16,
   },
+  separatorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  separator: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#000',
+    marginHorizontal: 10,
+  },
   orText: {
-    color: '#fff',
-    marginBottom: 10,
+    color: '#000',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginHorizontal: 5,
+  },
+  inputContainer: {
+    flex: 1,
+    justifyContent: 'center', // Centers input fields vertically
+    alignItems: 'center', // Centers input fields horizontally
+  },
+  label: {
+    alignSelf: 'flex-start',
+    marginLeft: '10%',
+    fontSize: 16,
+    color: '#000',
+    marginBottom: 5,
+    fontWeight: 'bold',
   },
   input: {
     backgroundColor: '#fff',
     padding: 10,
     width: '80%',
     marginBottom: 15,
-    borderRadius: 5,
+    borderRadius: 35,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   forgotText: {
-    color: '#fff',
-    marginBottom: 20,
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#000',
     textDecorationLine: 'underline',
   },
+  passwordContainer: {
+    width: '80%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  passwordLabel: {
+    color: '#000',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  forgotButton: {
+    // Keeps Forgot? aligned to the right
+  },
   button: {
+    borderWidth: 1,
+    borderColor: '#fff',
     backgroundColor: '#000',
     paddingVertical: 10,
     paddingHorizontal: 30,
-    borderRadius: 5,
+    borderRadius: 35,
     marginBottom: 20,
   },
   buttonText: {
@@ -77,6 +151,7 @@ const styles = StyleSheet.create({
   },
   signupText: {
     color: '#fff',
+    fontSize: 16,
     textDecorationLine: 'underline',
   },
 });

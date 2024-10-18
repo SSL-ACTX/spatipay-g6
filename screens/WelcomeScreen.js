@@ -22,6 +22,7 @@ export default function WelcomeScreen({ navigation }) {
       >
         <Text style={[styles.buttonText, { fontFamily: 'Inter_400Regular' }]}>Sign up</Text>
       </TouchableOpacity>
+      <Image source={require('../assets/cloud.png')} style={styles.overlayImage} /> 
       <TouchableOpacity onPress={() => navigation.navigate('Login')}>
         <Text style={styles.alreadyText}>
           <Text style={styles.alreadyTextPart}>Already have an account? </Text>
@@ -69,6 +70,8 @@ const styles = StyleSheet.create({
     tintColor: '#1E865B',
   },
   button: {
+    borderWidth: 1,
+    borderColor: '#fff',
     backgroundColor: '#000',
     paddingVertical: 15,
     paddingHorizontal: 60,
@@ -79,6 +82,11 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontSize: 16,
+  },
+  overlayImage: {
+    position: 'absolute',
+    alignSelf: 'center',
+    top: '17%',
   },
 });
 
