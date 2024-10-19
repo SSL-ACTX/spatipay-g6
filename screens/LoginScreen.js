@@ -1,41 +1,51 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { useFonts, Inter_400Regular, Inter_700Bold } from '@expo-google-fonts/inter';
 
 export default function LoginScreen({ navigation }) {
+  const [fontsLoaded] = useFonts({
+    Inter_400Regular,
+    Inter_700Bold,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
-        <Text style={styles.title}>Login to Spatipay</Text>
+        <Text style={[styles.title, { fontFamily: 'Inter_700Bold' }]}>Login to Spatipay</Text>
         <TouchableOpacity style={styles.googleButton}>
           <Image source={require('../assets/google-logo.webp')} style={{ width: 20, height: 20, marginRight: 10 }} />
-          <Text style={styles.googleText}>Log in with Google</Text>
+          <Text style={[styles.googleText, { fontFamily: 'Inter_400Regular'}]}>Log in with Google</Text>
         </TouchableOpacity>
         <View style={styles.separatorContainer}>
           <View style={styles.separator} />
-          <Text style={styles.orText}>  Or log in with Email  </Text>
+          <Text style={[styles.orText, { fontFamily: 'Inter_400Regular'}]}>  Or log in with Email  </Text>
           <View style={styles.separator} />
         </View>
       </View>
 
       {/* Input fields centered vertically */}
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Username or Email</Text>
+        <Text style={[styles.label, { fontFamily: 'Inter_400Regular' }]}>Username or Email</Text>
         <TextInput placeholder="Username or Email" style={styles.input} />
 
         {/* Password label with Forgot? on the same line */}
         <View style={styles.passwordContainer}>
-          <Text style={styles.passwordLabel}>Password</Text>
+          <Text style={[styles.passwordLabel, { fontFamily: 'Inter_400Regular' }]}>Password</Text>
           <TouchableOpacity style={styles.forgotButton}>
-            <Text style={styles.forgotText}>Forgot?</Text>
+            <Text style={[styles.forgotText, { fontFamily: 'Inter_400Regular'}]}>Forgot?</Text>
           </TouchableOpacity>
         </View>
         <TextInput placeholder="Password" style={styles.input} secureTextEntry />
 
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Login</Text>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
+          <Text style={[styles.buttonText, { fontFamily: 'Inter_400Regular'}]}>Login</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-          <Text style={styles.signupText}>Don't have an account? Sign up</Text>
+          <Text style={[styles.signupText, { fontFamily: 'Inter_400Regular'}]}>Don't have an account? Sign up</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -151,7 +161,8 @@ const styles = StyleSheet.create({
   },
   signupText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 14,
     textDecorationLine: 'underline',
   },
 });
+
