@@ -1,6 +1,8 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { Asset, useFonts } from 'expo-font';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
+import { useFonts } from 'expo-font';
+import { auth } from '../firebase'; 
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function LoginScreen({ navigation }) {
   const [fontsLoaded] = useFonts({
@@ -8,6 +10,19 @@ export default function LoginScreen({ navigation }) {
     'SpotifyMix-Regular': require('../assets/fonts/SpotifyMix-Regular.ttf'),
     'SpotifyMix-Medium': require('../assets/fonts/SpotifyMix-Medium.ttf'),
   });
+
+  const [email, setEmail] = useState(''); // State for email input
+  const [password, setPassword] = useState(''); // State for password input
+
+  const handleLogin = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      Alert.alert('Success', 'Logged in successfully!');
+      navigation.navigate('Home'); // Navigate to Home screen after successful login
+    } catch (error) {
+      Alert.alert('Error', error.message); // Show error message
+    }
+  };
 
   if (!fontsLoaded) {
     return null;
@@ -31,22 +46,33 @@ export default function LoginScreen({ navigation }) {
       {/* Input fields centered vertically */}
       <View style={styles.inputContainer}>
         <Text style={[styles.label, { fontFamily: 'SpotifyMix-Regular' }]}>Username or Email</Text>
-        <TextInput placeholder="Username or Email" style={styles.input} />
+        <TextInput
+          placeholder="Username or Email"
+          style={styles.input}
+          value={email}
+          onChangeText={setEmail} // Update email state on text change
+        />
 
         {/* Password label with Forgot? on the same line */}
         <View style={styles.passwordContainer}>
           <Text style={[styles.passwordLabel, { fontFamily: 'SpotifyMix-Regular' }]}>Password</Text>
           <TouchableOpacity style={styles.forgotButton}>
-            <Text style={[styles.forgotText, { fontFamily: 'SpotifyMix-Regular'}]}>Forgot?</Text>
+            <Text style={[styles.forgotText, { fontFamily: 'SpotifyMix-Regular' }]}>Forgot?</Text>
           </TouchableOpacity>
         </View>
-        <TextInput placeholder="Password" style={styles.input} secureTextEntry />
+        <TextInput
+          placeholder="Password"
+          style={styles.input}
+          value={password}
+          onChangeText={setPassword} // Update password state on text change
+          secureTextEntry
+        />
 
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
-          <Text style={[styles.buttonText, { fontFamily: 'SpotifyMix-Regular'}]}>Login</Text>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={[styles.buttonText, { fontFamily: 'SpotifyMix-Regular' }]}>Login</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-          <Text style={[styles.signupText, { fontFamily: 'SpotifyMix-Regular'}]}>Don't have an account? Sign up</Text>
+          <Text style={[styles.signupText, { fontFamily: 'SpotifyMix-Regular' }]}>Don't have an account? Sign up</Text>
         </TouchableOpacity>
       </View>
     </View>

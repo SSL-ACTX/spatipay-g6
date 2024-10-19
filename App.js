@@ -6,6 +6,8 @@ import LoginScreen from './screens/LoginScreen';
 import SignupScreen from './screens/SignupScreen';
 import HomeScreen from './screens/HomeScreen'; // Make sure HomeScreen is correctly imported
 import AboutScreen from './screens/AboutScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import { auth } from './firebase'; // Import your Firebase config
 
 const Stack = createStackNavigator();
 
@@ -19,7 +21,8 @@ export default function App() {
         
         {/* HomeScreen should be shown after login/signup */}
         <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="About" component={AboutScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="About" component={AboutScreen} options={{ headerShown: true }} />
+        <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: true }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

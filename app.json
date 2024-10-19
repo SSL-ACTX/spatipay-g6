@@ -18,10 +18,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.callix777.spatipayg6"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "81a54ddc-ce2c-48dc-bfde-1ccef0634376"
+      }
+    },
+    "owner": "callix777"
   }
 }

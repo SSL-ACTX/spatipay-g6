@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
 import { useFonts } from 'expo-font';
+import { auth } from '../firebase'; // Import your Firebase auth
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 export default function SignupScreen({ navigation }) {
   const [fontsLoaded] = useFonts({
@@ -10,6 +12,26 @@ export default function SignupScreen({ navigation }) {
   });
 
   const [isChecked, setIsChecked] = useState(false); // State to track checkbox status
+  const [name, setName] = useState(''); // State for name input
+  const [username, setUsername] = useState(''); // State for username input
+  const [email, setEmail] = useState(''); // State for email input
+  const [password, setPassword] = useState(''); // State for password input
+
+  const handleSignUp = async () => {
+    if (!isChecked) {
+      Alert.alert('Error', 'You must agree to the Terms of Service and Privacy Policy.');
+      return;
+    }
+
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      Alert.alert('Success', 'Account created successfully!');
+      navigation.navigate('Login');
+    } catch (error) {
+      console.error(error); // Log the error for debugging
+      Alert.alert('Error', error.message);
+    }
+  };
 
   if (!fontsLoaded) {
     return null;
@@ -33,16 +55,38 @@ export default function SignupScreen({ navigation }) {
       {/* Input fields with labels */}
       <View style={styles.inputContainer}>
         <Text style={[styles.label, { fontFamily: 'SpotifyMix-Regular' }]}>Enter your name</Text>
-        <TextInput placeholder="Enter your name" style={styles.input} />
+        <TextInput
+          placeholder="Enter your name"
+          style={styles.input}
+          value={name}
+          onChangeText={setName}
+        />
 
         <Text style={[styles.label, { fontFamily: 'SpotifyMix-Regular' }]}>Enter username</Text>
-        <TextInput placeholder="Enter username" style={styles.input} />
+        <TextInput
+          placeholder="Enter username"
+          style={styles.input}
+          value={username}
+          onChangeText={setUsername}
+        />
 
         <Text style={[styles.label, { fontFamily: 'SpotifyMix-Regular' }]}>Enter Email</Text>
-        <TextInput placeholder="Enter Email" style={styles.input} />
+        <TextInput
+          placeholder="Enter Email"
+          style={styles.input}
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address" // Email keyboard
+        />
 
         <Text style={[styles.label, { fontFamily: 'SpotifyMix-Regular' }]}>Enter password</Text>
-        <TextInput placeholder="Enter password" style={styles.input} secureTextEntry />
+        <TextInput
+          placeholder="Enter password"
+          style={styles.input}
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
       </View>
 
       {/* Checkbox for terms agreement */}
@@ -51,7 +95,7 @@ export default function SignupScreen({ navigation }) {
         <Text style={[styles.checkboxText, { fontFamily: 'SpotifyMix-Regular' }]}>I agree with the Terms of Service and Privacy policy</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={handleSignUp}>
         <Text style={[styles.buttonText, { fontFamily: 'SpotifyMix-Bold' }]}>Create Account</Text>
       </TouchableOpacity>
 
