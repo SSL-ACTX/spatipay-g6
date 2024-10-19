@@ -1,14 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Animated, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useFonts, Inter_400Regular, Inter_700Bold } from '@expo-google-fonts/inter';
+import { Asset, useFonts } from 'expo-font';
 
 export default function WelcomeScreen() {
-  const [fontsLoaded] = useFonts({
-    Inter_400Regular,
-    Inter_700Bold,
-  });
-
   const navigation = useNavigation(); // direct access sht
 
   const overlayImageAnimatedValue = useRef(new Animated.Value(0)).current;
@@ -18,7 +13,7 @@ export default function WelcomeScreen() {
       Animated.sequence([
         Animated.timing(overlayImageAnimatedValue, {
           toValue: 80,
-          duration: 2000,
+          duration: 3000,
           easing: Easing.linear,
           useNativeDriver: true,
         }),
@@ -32,6 +27,12 @@ export default function WelcomeScreen() {
     ).start();
   }, [overlayImageAnimatedValue]);
 
+  const [fontsLoaded] = useFonts({
+    'SpotifyMix-Bold': require('../assets/fonts/SpotifyMix-Bold.ttf'),
+    'SpotifyMix-Regular': require('../assets/fonts/SpotifyMix-Regular.ttf'),
+    'SpotifyMix-Medium': require('../assets/fonts/SpotifyMix-Medium.ttf'),
+  });
+
   if (!fontsLoaded) {
     return null;
   }
@@ -39,8 +40,8 @@ export default function WelcomeScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
-        <Text style={[styles.title, { fontFamily: 'Inter_700Bold' }]}>Welcome To Spatipay</Text>
-        <Text style={[styles.subtitle, { fontFamily: 'Inter_400Regular' }]}>Where Musical Excellence Meets Professionalism</Text>
+        <Text style={[styles.title, { fontFamily: 'SpotifyMix-Bold' }]}>Welcome To Spatipay</Text>
+        <Text style={[styles.subtitle, { fontFamily: 'SpotifyMix-Medium' }]}>Where Musical Excellence Meets Professionalism</Text>
       </View>
       <TouchableOpacity
         style={styles.button}
@@ -49,7 +50,7 @@ export default function WelcomeScreen() {
           navigation.navigate('Signup');
         }}
       >
-        <Text style={[styles.buttonText, { fontFamily: 'Inter_700Bold' }]}>Sign up</Text>
+        <Text style={[styles.buttonText, { fontFamily: 'SpotifyMix-Bold' }]}>Sign up</Text>
       </TouchableOpacity>
       <Animated.Image
         source={require('../assets/cloud.png')}
@@ -59,8 +60,8 @@ export default function WelcomeScreen() {
       />
       <TouchableOpacity onPress={() => navigation.navigate('Login')}>
         <Text style={styles.alreadyText}>
-          <Text style={styles.alreadyTextPart}>Already have an account? </Text>
-          <Text style={styles.loginText}>Login</Text>
+          <Text style={[styles.alreadyTextPart, { fontFamily: 'SpotifyMix-Regular' }]}>Already have an account? </Text>
+          <Text style={[styles.loginText, { fontFamily: 'SpotifyMix-Regular' }]}>Login</Text>
         </Text>
       </TouchableOpacity>
       <Image style={styles.logo} source={require('../assets/spotify-logo.png')} />
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   alreadyText: {
-    fontSize: 16,
+    fontSize: 14,
     marginBottom: 20,
   },
   alreadyTextPart: {

@@ -2,10 +2,17 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions } from 'react-native';
 import Carousel from 'react-native-snap-carousel-v4';
 import Svg, { Path } from 'react-native-svg'; // Import Svg and Path
+import { useFonts } from 'expo-font'; // Import useFonts
 
 const { width: screenWidth } = Dimensions.get('window');
 
 const AppScreen = ({ navigation }) => {
+  const [fontsLoaded] = useFonts({
+    'SpotifyMix-Bold': require('../assets/fonts/SpotifyMix-Bold.ttf'),
+    'SpotifyMix-Regular': require('../assets/fonts/SpotifyMix-Regular.ttf'),
+    'SpotifyMix-Medium': require('../assets/fonts/SpotifyMix-Medium.ttf'),
+  });
+
   const topAlbums = [
     { uri: 'https://picsum.photos/200/300' },
     { uri: 'https://picsum.photos/201/300' },
@@ -14,10 +21,14 @@ const AppScreen = ({ navigation }) => {
     { uri: 'https://picsum.photos/204/300' },
   ];
 
+  if (!fontsLoaded) {
+    return <Text>Loading...</Text>; // Display a loading state until fonts are ready
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Top Albums</Text>
+        <Text style={[styles.headerText, { fontFamily: 'SpotifyMix-Bold' }]}>Top Albums</Text>
       </View>
       <Carousel
         data={topAlbums}
@@ -35,7 +46,7 @@ const AppScreen = ({ navigation }) => {
         containerCustomStyle={styles.carouselContainer}
       />
       <View style={styles.songContainer}>
-        <Text style={styles.songText}>Top Songs</Text>
+        <Text style={[styles.songText, { fontFamily: 'SpotifyMix-Bold' }]}>Top Songs</Text>
       </View>
       <View style={styles.songs}>
         {[
@@ -46,7 +57,7 @@ const AppScreen = ({ navigation }) => {
         ].map((song, index) => (
           <TouchableOpacity key={index} style={styles.song}>
             <Image source={{ uri: song.uri }} style={styles.songImage} />
-            <Text style={styles.songTitle}>{song.title}</Text>
+            <Text style={[styles.songTitle, { fontFamily: 'SpotifyMix-Medium' }]}>{song.title}</Text>
             <View style={styles.playButton}>
               {/* Play Button SVG */}
               <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
@@ -91,7 +102,6 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 24,
-    fontWeight: 'bold',
     color: '#000',
   },
   album: {
@@ -122,7 +132,6 @@ const styles = StyleSheet.create({
   },
   songText: {
     fontSize: 24,
-    fontWeight: 'bold',
     color: '#000',
   },
   songs: {
@@ -149,7 +158,6 @@ const styles = StyleSheet.create({
   },
   songTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
     color: '#000',
   },
   playButton: {
@@ -183,3 +191,4 @@ const styles = StyleSheet.create({
 });
 
 export default AppScreen;
+
