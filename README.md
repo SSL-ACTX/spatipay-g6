@@ -65,9 +65,9 @@ Follow the steps below to set up and run **Spatipay** on your local machine.
 
 ## 📸 **Screenshots**
 
-| Login Screen                     | Music Browsing                      | Favorites                         |
-|-----------------------------------|-------------------------------------|-----------------------------------|
-| ![Login](https://placehold.co/150) | ![Browse](https://placehold.co/150) | ![Favorites](https://placehold.co/150) |
+| Login Screen                     | Music Browsing                      | 
+|-----------------------------------|-------------------------------------|
+| ![Login](https://placehold.co/150) | ![Browse](https://placehold.co/150) |
 
 *(Screenshots coming soon...)*
 
