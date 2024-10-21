@@ -12,10 +12,10 @@ export default function SignupScreen({ navigation }) {
   });
 
   const [isChecked, setIsChecked] = useState(false); // State to track checkbox status
-  const [name, setName] = useState(''); // State for name input
-  const [username, setUsername] = useState(''); // State for username input
-  const [email, setEmail] = useState(''); // State for email input
-  const [password, setPassword] = useState(''); // State for password input
+  const [name, setName] = useState(''); 
+  const [username, setUsername] = useState(''); 
+  const [email, setEmail] = useState(''); 
+  const [password, setPassword] = useState(''); 
 
   const handleSignUp = async () => {
     if (!isChecked) {

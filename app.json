@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "spatipay-g6",
+    "name": "Spatipay-G6",
     "slug": "spatipay-g6",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "icon": "./assets/spotify-logo.png",
+    "userInterfaceStyle": "dark",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#000"
     },
     "ios": {
       "supportsTablet": true
@@ -17,18 +17,18 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#000"
       },
-      "package": "com.callix777.spatipayg6"
+      "package": "com.seuriin.spatipayg6"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/spotify-logo.png"
     },
     "extra": {
       "eas": {
         "projectId": "81a54ddc-ce2c-48dc-bfde-1ccef0634376"
       }
     },
-    "owner": "callix777"
+    "owner": "seuriin"
   }
 }

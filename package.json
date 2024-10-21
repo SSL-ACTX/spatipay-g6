@@ -31,7 +31,8 @@
     "react-native-screens": "^3.34.0",
     "react-native-snap-carousel": "^3.9.1",
     "react-native-snap-carousel-v4": "^1.0.1",
-    "react-native-svg": "^15.8.0"
+    "react-native-svg": "^15.8.0",
+    "expo-av": "~14.0.7"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

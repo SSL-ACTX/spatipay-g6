@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions, TextInput, Alert, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions, TextInput, Alert, ScrollView, Animated } from 'react-native';
 import Carousel from 'react-native-snap-carousel-v4';
 import Svg, { Path } from 'react-native-svg';
 import { useFonts } from 'expo-font';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Audio } from 'expo-av'; 
 
-// Simulated JSON data
 const initialTopAlbums = [
   { uri: 'https://i.ibb.co/wwdncLg/ab67616d00001e02aa23e019734fd2eaeab2425e.jpg' },
   { uri: 'https://i.ibb.co/7kpWf44/Screenshot-20241019-233647.jpg' },
@@ -24,30 +24,39 @@ const AppScreen = ({ navigation }) => {
     'SpotifyMix-Medium': require('../assets/fonts/SpotifyMix-Medium.ttf'),
   });
 
-  const [topAlbums, setTopAlbums] = useState([]); // Top albums fetched from JSON
+  const [topAlbums, setTopAlbums] = useState([]);
   const [showSecretContainer, setShowSecretContainer] = useState(false);
   const [newImage, setNewImage] = useState('');
+  const [sound, setSound] = useState(); // State to hold the audio object
+  const [isPlaying, setIsPlaying] = useState(false); // State to track if a song is playing
+  const [currentSongIndex, setCurrentSongIndex] = useState(null); // Track the currently playing song index
+  const [animation] = useState(new Animated.Value(0)); // Animated value for indicator
 
-  // Load JSON data on start
+  const songs = [
+    { uri: 'https://github.com/SSL-ACTX/TG_Test/raw/569f5a5d2b1847c239424a86e163a592db98f0ca/Cup%20of%20Joe,%20Janine%20Te%C3%B1oso%20%20-%20_Tingin_%20(Official%20Lyric%20Video).m4a' },
+    { uri: 'https://github.com/SSL-ACTX/TG_Test/raw/569f5a5d2b1847c239424a86e163a592db98f0ca/Mundo.m4a' },
+    { uri: 'https://github.com/SSL-ACTX/TG_Test/raw/569f5a5d2b1847c239424a86e163a592db98f0ca/TAKE%20ALL%20THE%20LOVE%20-%20Arthur%20Nery%20%5BOfficial%20Lyric%20Video%5D.m4a' },
+    { uri: 'https://github.com/SSL-ACTX/TG_Test/raw/569f5a5d2b1847c239424a86e163a592db98f0ca/Maki%20-%20Dilaw%20(Lyrics).m4a' },
+  ];
+
   useEffect(() => {
     const loadAlbums = async () => {
       const storedAlbums = await AsyncStorage.getItem('topAlbums');
       if (storedAlbums) {
-        setTopAlbums(JSON.parse(storedAlbums)); // Load from AsyncStorage
+        setTopAlbums(JSON.parse(storedAlbums));
       } else {
-        setTopAlbums(initialTopAlbums); // Fallback to initial data
+        setTopAlbums(initialTopAlbums);
       }
     };
     loadAlbums();
   }, []);
 
-  // Function to save top albums to AsyncStorage
   const saveAlbums = async (albums) => {
     await AsyncStorage.setItem('topAlbums', JSON.stringify(albums));
   };
 
   const handleLongPress = () => {
-    setShowSecretContainer(true);  // Show the secret container
+    setShowSecretContainer(true);
   };
 
   const handleAddImage = () => {
@@ -56,25 +65,115 @@ const AppScreen = ({ navigation }) => {
       return;
     }
     const newAlbums = [...topAlbums, { uri: newImage }];
-    setTopAlbums(newAlbums); // Add new image to carousel
-    saveAlbums(newAlbums); // Save to AsyncStorage
-    setNewImage(''); // Clear input
+    setTopAlbums(newAlbums);
+    saveAlbums(newAlbums);
+    setNewImage('');
   };
 
   const handleChangeImage = (index, value) => {
     const updatedAlbums = [...topAlbums];
     updatedAlbums[index].uri = value;
-    setTopAlbums(updatedAlbums); // Update image URL in the carousel
-    saveAlbums(updatedAlbums); // Save to AsyncStorage
+    setTopAlbums(updatedAlbums);
+    saveAlbums(updatedAlbums);
   };
 
   const closeSecretContainer = () => {
     setShowSecretContainer(false);
   };
 
+  const handleSongPress = async (index) => {
+    const cachedSoundKey = `cachedSound_${index}`;
+    const cachedSound = await AsyncStorage.getItem(cachedSoundKey);
+    
+    // If the same song is clicked, stop it
+    if (currentSongIndex === index) {
+      if (isPlaying) {
+        await sound.stopAsync();
+        setIsPlaying(false);
+        Animated.timing(animation, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      } else {
+        await sound.playAsync();
+        setIsPlaying(true);
+      }
+    } else {
+      // Load new song
+      if (sound) {
+        await sound.unloadAsync(); // Unload previous sound
+      }
+
+      // Check if the sound is already cached
+      if (cachedSound) {
+        const { sound: newSound } = await Audio.Sound.createAsync({ uri: cachedSound });
+        setSound(newSound);
+        await newSound.playAsync();
+        setIsPlaying(true);
+        setCurrentSongIndex(index);
+        // Start the animation
+        Animated.loop(
+          Animated.sequence([
+            Animated.timing(animation, {
+              toValue: 0.3,
+              duration: 300,
+              useNativeDriver: true,
+            }),
+            Animated.timing(animation, {
+              toValue: 0,
+              duration: 300,
+              useNativeDriver: true,
+            }),
+          ]),
+        ).start();
+      } else {
+        // If not cached, fetch the sound and cache it
+        const { sound: newSound } = await Audio.Sound.createAsync({ uri: songs[index].uri });
+        setSound(newSound);
+        await newSound.playAsync();
+        await AsyncStorage.setItem(cachedSoundKey, songs[index].uri); // Cache the song URI
+        setIsPlaying(true);
+        setCurrentSongIndex(index);
+        // Start the animation
+        Animated.loop(
+          Animated.sequence([
+            Animated.timing(animation, {
+              toValue: 0.3,
+              duration: 300,
+              useNativeDriver: true,
+            }),
+            Animated.timing(animation, {
+              toValue: 0,
+              duration: 300,
+              useNativeDriver: true,
+            }),
+          ]),
+        ).start();
+      }
+    }
+  };
+
+  // New logout function
+  const handleLogout = async () => {
+    if (sound) {
+      await sound.stopAsync(); // Stop the current song
+      await sound.unloadAsync(); // Unload the sound to free resources
+      setIsPlaying(false); // Reset the playing state
+      setCurrentSongIndex(null); // Reset the current song index
+    }
+    navigation.navigate('Login'); // Navigate to the Login screen
+  };
+
   if (!fontsLoaded) {
     return <Text>Loading...</Text>;
   }
+
+  // Calculate scale for the indicator based on animated value
+  const scaleInterpolate = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 1.5],
+  });
 
   return (
     <View style={styles.container}>
@@ -106,7 +205,7 @@ const AppScreen = ({ navigation }) => {
           <TouchableOpacity onPress={closeSecretContainer} style={styles.closeButton}>
             <Text style={styles.closeButtonText}>Close</Text>
           </TouchableOpacity>
-          
+
           {topAlbums.map((album, index) => (
             <View key={index} style={styles.imageLinkContainer}>
               <Text style={styles.imageText}>Image {index + 1}:</Text>
@@ -141,7 +240,7 @@ const AppScreen = ({ navigation }) => {
           { uri: 'https://i.ibb.co/DrZrgBW/tkall.jpg', title: 'Arthur Nery - Take All The Love' },
           { uri: 'https://i.ibb.co/4j99vDC/dlaw.jpg', title: 'Maki - Dilaw' }
         ].map((song, index) => (
-          <TouchableOpacity key={index} style={styles.song}>
+          <TouchableOpacity key={index} style={styles.song} onPress={() => handleSongPress(index)}>
             <Image source={{ uri: song.uri }} style={styles.songImage} />
             <Text style={[styles.songTitle, { fontFamily: 'SpotifyMix-Medium' }]}>{song.title}</Text>
             <View style={styles.playButton}>
@@ -150,6 +249,11 @@ const AppScreen = ({ navigation }) => {
                 <Path d="M8 5v14l11-7L8 5z" fill="#000000" />
               </Svg>
             </View>
+            {currentSongIndex === index && isPlaying && (
+              <Animated.View style={[styles.indicator, { transform: [{ scale: scaleInterpolate }] }]}>
+                <Text style={styles.indicatorText}>Playing</Text>
+              </Animated.View>
+            )}
           </TouchableOpacity>
         ))}
       </View>
@@ -160,7 +264,7 @@ const AppScreen = ({ navigation }) => {
         <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('Profile')}>
           <Image source={require('../assets/user.png')} style={styles.footerIcon} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('Login')}>
+        <TouchableOpacity style={styles.footerButton} onPress={handleLogout}>
           <Image source={require('../assets/exit.png')} style={styles.footerIcon} />
         </TouchableOpacity>
       </View>
@@ -176,7 +280,7 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 5,
-    marginTop: '10%',
+    marginTop: '8%',
     marginLeft: '20%',
     marginRight: '20%',
     marginBottom: '4%',
@@ -195,8 +299,13 @@ const styles = StyleSheet.create({
     height: 200,
     backgroundColor: '#fff',
     borderRadius: 14,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: '#000',
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.75,
+    shadowRadius: 5.84,
+    elevation: 10,
     overflow: 'hidden',
   },
   albumImage: {
@@ -236,7 +345,7 @@ const styles = StyleSheet.create({
   },
   songContainer: {
     position: 'absolute',
-    top: '43%',
+    top: '42%',
     left: '20%',
     right: '20%',
     padding: 5,
@@ -295,6 +404,8 @@ const styles = StyleSheet.create({
   footerButton: {
     width: 50,
     height: 50,
+    borderWidth: 2,
+    borderColor: '#000',
     borderRadius: 50,
     backgroundColor: '#fff',
     alignItems: 'center',
